@@ -14,5 +14,39 @@
 
     <input type="submit" value="Register">
   </form>
+
+  <script>const axios = require('axios');
+
+    function submitForm()
+      {
+        checkIfEditing()
+        
+      }
+
+      const checkIfEditing = async function (){
+
+    // User login URL
+    axios.post("http://localhost:4000/dologin",user)
+      
+    .then((response) =>  
+      
+      // sets UserGet to info response
+      userGet = response.data
+    )
+
+    // For error
+    .catch((error) => 
+    {
+      console.log(error);
+    });
+
+    // give time to request info
+    setTimeout(() => { 
+
+      console.log(userGet)
+    
+    })
+    }
+</script>
 </body>
 </html>

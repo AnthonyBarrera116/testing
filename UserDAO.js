@@ -9,36 +9,40 @@ const userSchema = new mongoose.Schema({
  },
  { collection : 'Users' });
 
- const userModel = mongoose.model('User', userSchema);
+ const userModel = mongoose.model('Users', userSchema);
 
  exports.create = async function(user){
-    let duplicateName = await userModel.find({UserName: user.UserName}).lean();
-    let duplicateEmail = await userModel.find({Email: user.Email}).lean();
+    let duplicateU = await userModel.findOne({UserName: user.UserName});
+    let duplicateE = await userModel.findOne({Email: user.Email});
+    //console.log(user.UserName)
+    //console.log(user.Email)
+    //console.log(user.UserName)
 
-    console.log(user.UserName)
-    console.log( user.Email)
-    if(duplicateName.length > 0)
-    {
-        console.log("User \"" + user.UserName + "\" already exists");
-        //console.log(JSON.stringify(duplicateName));
-        if(duplicateEmail.length > 0)
-        {
-            console.log("Email: \"" + user.Email + "\" is already being used");
-            //console.log(JSON.stringify(duplicateEmail));
-        }
-        return null;
+    if(duplicateU != null){
+
+        console.log("Username ")
+        return 0;
+        
     }
-    else if(duplicateEmail.length > 0)
-    {
-        console.log("Email: \"" + user.Email + "\" is already being used");
-        //console.log(JSON.stringify(duplicateEmail));
-        return null;
+
+    if(duplicateE != null){
+
+        console.log("eamil ")
+        return 1;
+        
     }
+
     else
     {
         const mongoUser = new userModel(user);
         await mongoUser.save();
-        return await exports.readById(mongoUser._id);
+        return await exports.read(mongoUser._id);
     }
     //Used the read function because in tests it kept returning the _id in the beginning rather than end
+
  }
+
+ exports.read = async function(id){
+    let user = await userModel.findById(id);
+    return user;
+}

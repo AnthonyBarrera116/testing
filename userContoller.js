@@ -16,23 +16,24 @@ exports.create = async function(request, response)
     //console.log( JSON.stringify(request.body) );
     
     // extract individual elements, hash Password
-    let username = request.body.UserName;
-    let password = request.body.Password;
-    let email = request.body.Email;
+    let username = request.body.username;
+    let password = request.body.password;
+    let email = request.body.email;
     
     // building the user based on the info from the request
     let user = 
     {
         UserName: username,
-        Email: email,
         Password: password,
-        History: []
+        Email: email,
+        History: [],
     };
-    
+
     // creating the user with the dao. if the user already exists, the dao returns 'null', else it returns the user
     let returnedUser = await dao.create( user );
+
     // if we get a user, send their information minus their Password
-    if (returnedUser !== null)
+    if (returnedUser != 0 || returnedUser != 1)
     {
         returnedUser.Password = null; // set the Password to 'null' for security
         
@@ -40,12 +41,14 @@ exports.create = async function(request, response)
         response.status(200);
         
         // send user information back to the app
-        response.send(returnedUser);
+        return returnedUser;
+        
     }
     // if we get null, send back null
     else
     {
         response.status(500);
-        response.send(null);
+        console.log("exits");
+
     }
 }
