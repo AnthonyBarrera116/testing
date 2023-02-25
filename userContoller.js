@@ -18,14 +18,12 @@ exports.create = async function(request, response)
     // extract individual elements, hash Password
     let username = request.body.username;
     let password = request.body.password;
-    let email = request.body.email;
     
     // building the user based on the info from the request
     let user = 
     {
         UserName: username,
         Password: password,
-        Email: email,
         History: [],
     };
 
@@ -41,14 +39,12 @@ exports.create = async function(request, response)
         response.status(200);
         
         // send user information back to the app
-        return returnedUser;
         
     }
     // if we get null, send back null
     else
     {
         response.status(500);
-        console.log("exits");
 
     }
 }

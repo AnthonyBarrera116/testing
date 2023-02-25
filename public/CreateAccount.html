@@ -5,48 +5,47 @@
 </head>
 <body>
   <h1>Register</h1>
-  <form action="/register" method="post">
+  <form id ="create"method="post"action="/register">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required><br>
 
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required><br>
 
-    <input type="submit" value="Register">
-  </form>
+    <input type="submit" value="Register" onclick="submit()">
 
-  <script>const axios = require('axios');
-
-    function submitForm()
-      {
-        checkIfEditing()
-        
-      }
-
-      const checkIfEditing = async function (){
-
-    // User login URL
-    axios.post("http://localhost:4000/dologin",user)
-      
-    .then((response) =>  
-      
-      // sets UserGet to info response
-      userGet = response.data
-    )
-
-    // For error
-    .catch((error) => 
-    {
-      console.log(error);
-    });
-
-    // give time to request info
-    setTimeout(() => { 
-
-      console.log(userGet)
+    </form>
+  <script>
     
-    })
+    
+    const url="http://localhost:4000/register"
+    
+    async function submit(){
+
+      const user = 
+        {
+            UserName: document.getElementById("username").value,
+            Password: document.getElementById("password").value, 
+            History: []
+        };
+        // log the URL just to be sure we're connecting to the right port
+        //console.log(url);
+        
+        // use a POST request with Axios. we're posting the user's information to the server
+        axios.post(url, user)
+        .then((response) => alert( response.status()))//JSON.stringify( response.data )
+        .catch((error) => 
+        {
+            console.log(error);
+        });
+        
+        // simply print the user's information
+        // indicates that we can retrieve user info from the DB to the app
+        alert(  response.status());
+
     }
+  
+
 </script>
 </body>
 </html>

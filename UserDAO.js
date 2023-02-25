@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
  UserName: String,
- Email: String,
  Password: String,
  History: []
  },
@@ -13,7 +12,6 @@ const userSchema = new mongoose.Schema({
 
  exports.create = async function(user){
     let duplicateU = await userModel.findOne({UserName: user.UserName});
-    let duplicateE = await userModel.findOne({Email: user.Email});
     //console.log(user.UserName)
     //console.log(user.Email)
     //console.log(user.UserName)
@@ -22,13 +20,6 @@ const userSchema = new mongoose.Schema({
 
         console.log("Username ")
         return 0;
-        
-    }
-
-    if(duplicateE != null){
-
-        console.log("eamil ")
-        return 1;
         
     }
 
