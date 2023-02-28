@@ -1,4 +1,5 @@
 let dao = require("./UserDAO");
+const session = require("express-session");
 //const passUtil = require('../Util/PasswordUtil');
 //let dao = require("./MockUserDao");
 
@@ -7,86 +8,64 @@ exports.setDao = function(otherDao)
     dao = otherDao;
 }
 
-exports.create = async function(request, response)
-{
-    // creating a new User Object to be sent to the DAO
-    // shares the exact same fields as a user in the DAO
-    
-    //console.log("i\'m running this from the controller!");
-    //console.log( JSON.stringify(request.body) );
-    
-    // extract individual elements, hash Password
-    let e = request.body.username;
-    let p = request.body.password;
-    
-    // building the user based on the info from the request
-    let user = 
-    {
-        Email: e,
-        Password: p,
-        History: [],
-    };
+exports.login = async function(req, res){
 
-    console.log(user.Password)
-    console.log(user.Email)
-    // creating the user with the dao. if the user already exists, the dao returns 'null', else it returns the user
-    let returnedUser = await dao.create( user );
-
-    // if we get a user, send their information minus their Password
-    if (returnedUser != 0)
-    {
-        returnedUser.Password = null; // set the Password to 'null' for security
+    let email = req.body.emailUser;
+    let password = req.body.password;
+    let user = await dao.login(email, password);
+    
+    if(user != null){ //login successful
+        user.Password = null; //for security
+        //Save the user in the session
         
-        // send 200 status, indicating we connected
-        response.status(200);
-        
-        // send user information back to the app
-        
+        req.session.user = user;
+        res.redirect('profile.html');
     }
-    // if we get null, send back null
-    else
-    {
-        response.status(500);
+    else{ 
 
+        res.redirect('AccountPage.html?error=1');
+        
     }
 }
 
-exports.find = async function(request, response)
-{
-    // creating a new User Object to be sent to the DAO
-    // shares the exact same fields as a user in the DAO
-    
-    //console.log("i\'m running this from the controller!");
-    //console.log( JSON.stringify(request.body) );
-    
-    // extract individual elements, hash Password
-    let username = request.body.UserName;
-    let password = request.body.Password;
-    
-    // building the user based on the info from the request
-    let user = 
-    {
-        UserName: username,
-        Password: password,
-        History: [],
-    };
+exports.loggedUser = function(req,res){
 
-    // creating the user with the dao. if the user already exists, the dao returns 'null', else it returns the user
-    let returnedUser = await dao.findOne( user );
+    res.status(200); 
 
-    // if we get a user, send their information minus their Password
-    if ( returnedUser == null)
-    {
+    res.send( req.session.user ); 
 
-        response.status(500);
-        
-        // send user information back to the app
-        
+    res.end(); 
+}
+
+exports.logout = function(req, res){
+
+    req.session.user = null;
+
+    res.redirect('About.html');
+}
+
+exports.Create = async function(req,res){
+    let newuser = {}; 
+
+    newuser.Email = req.body.emailUser;
+    newuser.Password = req.body.password;
+    newuser.History = [];
+
+    let userExist = await dao.findOne(newuser.Email);
+
+    console.log(userExist)
+
+    if(userExist === null){
+
+        console.log("Create")
+        dao.create(newuser);    
+        res.redirect('About.html');
+
     }
-    // if we get null, send back null
-    else
-    {
-        response.status(200);
+    else{    
+
+        console.log("email exist")
+        res.redirect('CreateAccount.html?error=1');
 
     }
 }

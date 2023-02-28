@@ -2,38 +2,27 @@ const { Db } = require('mongodb');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
- UserName: String,
- Password: String,
- History: []
+    Email: { type:String, alias:'email', required:true },
+    Password: String,
+    History: [],
  },
- { collection : 'Users' });
+{ collection : 'Users' });
 
- const userModel = mongoose.model('Users', userSchema);
+const userModel = mongoose.model('Users', userSchema);
 
- exports.create = async function(user){
-    let duplicateU = await userModel.findOne({Email: user.Email});
-    //console.log(user.UserName)
-    //console.log(user.Email)
-    //console.log(user.UserName)
+exports.create = async function(newuser){
+    const user = new userModel(newuser);
+    await user.save();
+    return user;
+}
 
-    if(duplicateU != null){
+exports.findOne = async function(id){
+    let user = await userModel.findOne({Email: id});
 
-        console.log("Email ")
-        return 0;
-        
-    }
+    return user;
+}
 
-    else
-    {
-        const mongoUser = new userModel(user);
-        await mongoUser.save();
-        return await exports.findOne(mongoUser._id);
-    }
-    //Used the read function because in tests it kept returning the _id in the beginning rather than end
-
- }
-
- exports.findOne = async function(id){
-    let user = await userModel.findById(id);
+exports.login = async function(email, password){
+    let user = await userModel.findOne({Email:email, Password:password});
     return user;
 }

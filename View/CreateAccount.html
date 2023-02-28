@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+</head>
+<body>
+  <h1>Register</h1>
+  <form id ="create"method="post"action="/create">
+
+    <label for="emailUser">Email:</label>
+    <input class="form-control" type="email" name="emailUser" id="emailUser" required />
+
+    <label for="password">Password:</label>
+    <input class="form-control" type="password" name="password" id="password" minlength="6" required />
+
+    <button type="submit" class="btn btn-success btn-block"> Create </button>
+
+  </form>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6" id="msg-display">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+
+    const params = new URLSearchParams(window.location.search);    
+    let error = params.get('error');
+    let msg = null;
+    if(error === '1'){
+      msg = `
+         <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Error!</strong> Wrong Email or Password
+          </div>
+      `;
+       document.getElementById("msg-display").innerHTML = msg;
+    } 
+    //window.alert('Login or Password Incorrect');
+  
+  
+
+</script>
+</body>
+</html>
